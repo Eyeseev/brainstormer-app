@@ -1,0 +1,7 @@
+{
+  "name": "brainstormer-app",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "devCommand": "npm run dev",
+  "framework": "vite"
+}
