@@ -176,7 +176,14 @@ Guidelines:
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       console.error('OpenAI API error:', response.status, errorData);
-      res.status(500).json({ error: 'AI processing failed' });
+      
+      // Return more detailed error for debugging (without exposing sensitive data)
+      const errorMessage = errorData.error?.message || errorData.error?.code || 'Unknown OpenAI API error';
+      res.status(500).json({ 
+        error: 'AI processing failed',
+        details: errorMessage,
+        status: response.status
+      });
       return;
     }
 
