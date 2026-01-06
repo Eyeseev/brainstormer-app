@@ -4,6 +4,7 @@ import { Workspace } from './components/Workspace';
 import { RunningList } from './components/RunningList';
 import type { ActionItem } from './types';
 import { loadRunningList, saveRunningList, clearRunningList as clearStorage } from './utils/storage';
+import './App.css';
 
 function App() {
   const [runningList, setRunningList] = useState<ActionItem[]>(() => loadRunningList());
@@ -55,8 +56,8 @@ function App() {
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-neutral-50">
-        <div className="flex flex-col lg:flex-row">
+      <div className="min-h-screen bg-neutral">
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-6 p-4 lg:p-8">
           <main className="flex-1 min-w-0">
             <Workspace onAddToRunningList={handleAddToRunningList} />
           </main>

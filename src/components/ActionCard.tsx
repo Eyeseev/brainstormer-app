@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, Sparkles, Plus } from 'lucide-react';
-import type { ActionSection, ActionItem } from '../types';
-import { useToast } from '../hooks/useToast';
+import type { ActionSection } from '../types';
 import { expandSection } from '../utils/mockDataGenerator';
+import { useToast } from '../hooks/useToast';
 
 interface ActionCardProps {
   section: ActionSection;
@@ -11,19 +11,18 @@ interface ActionCardProps {
 }
 
 export const ActionCard = ({ section, onAddToRunningList }: ActionCardProps) => {
-  const [items, setItems] = useState<ActionItem[]>(section.items);
-  const [isExpanding, setIsExpanding] = useState(false);
   const { showToast } = useToast();
+  const [items, setItems] = useState(section.items);
+  const [isExpanding, setIsExpanding] = useState(false);
 
   const handleCopySection = () => {
-    const text = `${section.title}\n\n${items.map((item) => `• ${item.text}`).join('\n')}`;
+    const text = items.map((item) => `- ${item.text}`).join('\n');
     navigator.clipboard.writeText(text);
     showToast('Section copied to clipboard');
   };
 
-  const handleExpand = async () => {
+  const handleExpand = () => {
     setIsExpanding(true);
-    // Simulate API call delay
     setTimeout(() => {
       const newItems = expandSection({ ...section, items });
       setItems((prev) => [...prev, ...newItems]);
@@ -42,23 +41,29 @@ export const ActionCard = ({ section, onAddToRunningList }: ActionCardProps) => 
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl border border-neutral-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+      className="bg-surface border border-border rounded-card overflow-hidden"
     >
-      <div className="p-5 border-b border-neutral-200 bg-neutral-50/50">
+      <div className="p-6 border-b border-border bg-neutral relative z-10">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-heading font-semibold text-neutral-900">{section.title}</h3>
-          <div className="flex gap-2">
-            <button
+          <h3 className="text-xl font-semibold text-text">
+            {section.title}
+          </h3>
+          <div className="flex gap-3">
+            <motion.button
               onClick={handleCopySection}
-              className="p-2 text-neutral-500 hover:text-neutral-700 hover:bg-white rounded-lg transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2.5 text-text hover:bg-surface border border-border rounded-control transition-all focus-ring"
               title="Copy section"
             >
               <Copy className="w-4 h-4" />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={handleExpand}
               disabled={isExpanding}
-              className="p-2 text-neutral-500 hover:text-neutral-700 hover:bg-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2.5 text-text hover:bg-surface border border-border rounded-control transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 focus-ring"
               title="Expand with AI suggestions"
             >
               {isExpanding ? (
@@ -71,34 +76,37 @@ export const ActionCard = ({ section, onAddToRunningList }: ActionCardProps) => 
               ) : (
                 <>
                   <Plus className="w-4 h-4" />
-                  <Sparkles className="w-3 h-3" />
+                  <Sparkles className="w-3.5 h-3.5" />
                 </>
               )}
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
       
-      <div className="p-5">
-        <ul className="space-y-3">
+      <div className="p-6 bg-surface relative z-10">
+        <ul className="space-y-4">
           {items.map((item) => (
             <motion.li
               key={item.id}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex items-start gap-3 group"
+              className="flex items-start gap-4 group"
             >
               <input
                 type="checkbox"
                 checked={item.completed}
                 onChange={() => handleToggleComplete(item.id)}
-                className="mt-1 w-4 h-4 rounded border-neutral-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer flex-shrink-0"
+                className="mt-1 w-5 h-5 border border-border rounded control accent-primary cursor-pointer flex-shrink-0 focus-ring"
               />
               <button
-                onClick={() => onAddToRunningList(item.text)}
-                className="flex-1 text-left text-sm text-neutral-700 hover:text-neutral-900 transition-colors leading-relaxed"
+                onClick={() => {
+                  onAddToRunningList(item.text);
+                  window.dispatchEvent(new Event('runningListAdd'));
+                }}
+                className="flex-1 text-left text-sm text-text hover:text-primary transition-colors leading-relaxed font-medium"
               >
-                <span className={item.completed ? 'line-through text-neutral-400' : ''}>
+                <span className={item.completed ? 'line-through text-muted' : ''}>
                   {item.text}
                 </span>
               </button>
