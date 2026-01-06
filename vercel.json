@@ -3,5 +3,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
-  "framework": "vite"
+  "framework": "vite",
+  "functions": {
+    "api/distill.ts": {
+      "runtime": "@vercel/node"
+    }
+  }
 }
