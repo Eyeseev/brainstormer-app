@@ -1,21 +1,39 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Copy, Trash2 } from 'lucide-react';
+import { X, Copy, Trash2, Plus } from 'lucide-react';
 import type { ActionItem } from '../types';
 import { useToast } from '../hooks/useToast';
 
 interface RunningListProps {
   items: ActionItem[];
+  onAdd: (text: string) => void;
   onRemove: (id: string) => void;
   onClear: () => void;
 }
 
-export const RunningList = ({ items, onRemove, onClear }: RunningListProps) => {
+export const RunningList = ({ items, onAdd, onRemove, onClear }: RunningListProps) => {
   const { showToast } = useToast();
+  const [inputValue, setInputValue] = useState('');
 
   const handleCopyAll = () => {
     const text = items.map((item) => `- ${item.text}`).join('\n');
     navigator.clipboard.writeText(text);
     showToast('Running list copied to clipboard');
+  };
+
+  const handleAddTask = () => {
+    const trimmedValue = inputValue.trim();
+    if (trimmedValue) {
+      onAdd(trimmedValue);
+      setInputValue('');
+      showToast('Task added to running list');
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleAddTask();
+    }
   };
 
   return (
@@ -48,12 +66,34 @@ export const RunningList = ({ items, onRemove, onClear }: RunningListProps) => {
           </div>
         )}
       </div>
+
+      <div className="p-4 border-b border-neutral-200">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Add a task..."
+            className="flex-1 px-3 py-2 text-sm bg-white border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-neutral-700 placeholder-neutral-400"
+          />
+          <motion.button
+            onClick={handleAddTask}
+            disabled={!inputValue.trim()}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+          >
+            <Plus className="w-4 h-4" />
+          </motion.button>
+        </div>
+      </div>
       
       <div className="flex-1 overflow-y-auto p-4">
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center text-neutral-400">
             <p className="text-sm">Your running list is empty</p>
-            <p className="text-xs mt-1">Click tasks to add them here</p>
+            <p className="text-xs mt-1">Add tasks manually or click tasks from action cards</p>
           </div>
         ) : (
           <AnimatePresence mode="popLayout">

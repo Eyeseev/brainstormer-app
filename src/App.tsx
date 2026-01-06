@@ -51,6 +51,7 @@ function App() {
           <div className="lg:w-80 xl:w-96 flex-shrink-0">
             <RunningList
               items={runningList}
+              onAdd={handleAddToRunningList}
               onRemove={handleRemoveFromRunningList}
               onClear={handleClearRunningList}
             />
