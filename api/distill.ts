@@ -1,11 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // Cost control: hard-locked to cheapest flagship model
-const MODEL = 'gpt-5-mini';
+const MODEL = 'gpt-4o-mini';
 
 // Runtime validation guardrail
-if (MODEL !== 'gpt-5-mini') {
-  throw new Error('Cost control violation: model must be gpt-5-mini');
+if (MODEL !== 'gpt-4o-mini') {
+  throw new Error('Cost control violation: model must be gpt-4o-mini');
 }
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
