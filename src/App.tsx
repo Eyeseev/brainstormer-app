@@ -41,6 +41,18 @@ function App() {
     clearStorage();
   };
 
+  const handleToggleComplete = (id: string) => {
+    setRunningList((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, completed: !item.completed } : item
+      )
+    );
+  };
+
+  const handleClearCompleted = () => {
+    setRunningList((prev) => prev.filter((item) => !item.completed));
+  };
+
   return (
     <ToastProvider>
       <div className="min-h-screen bg-neutral-50">
@@ -54,6 +66,8 @@ function App() {
               onAdd={handleAddToRunningList}
               onRemove={handleRemoveFromRunningList}
               onClear={handleClearRunningList}
+              onToggleComplete={handleToggleComplete}
+              onClearCompleted={handleClearCompleted}
             />
           </div>
         </div>
