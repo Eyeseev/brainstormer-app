@@ -114,8 +114,8 @@ export default async function handler(
   }
 
   // Ensure model is still hard-locked (defensive check)
-  if (MODEL !== 'gpt-5-mini') {
-    const error = new Error('Cost control violation: model must be gpt-5-mini');
+  if (MODEL !== 'gpt-4o-mini') {
+    const error = new Error('Cost control violation: model must be gpt-4o-mini');
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
     return;
